@@ -68,7 +68,7 @@ public class PicturePortionSelectionDialog extends JDialog {
 
         JToolBar toolBar = new JToolBar();
         add(toolBar, BorderLayout.PAGE_END);
-        toolBar.add(new AbstractAction("Hello") {
+        toolBar.add(new AbstractAction("Import portions") {
 
             private JFileChooser fileChooser = new JFileChooser();
 
@@ -85,6 +85,22 @@ public class PicturePortionSelectionDialog extends JDialog {
                 }
             }
 
+        });
+        toolBar.add(new AbstractAction("Export portions") {
+
+            private JFileChooser fileChooser = new JFileChooser();
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int ret = fileChooser.showSaveDialog(PicturePortionSelectionDialog.this);
+                if (ret == JFileChooser.APPROVE_OPTION) {
+                    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileChooser.getSelectedFile()))) {
+                        oos.writeObject(portions);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
         });
         pack();
     }
@@ -109,6 +125,7 @@ public class PicturePortionSelectionDialog extends JDialog {
     public boolean edit(File file) throws IOException {
         getPortions().clear();
         setImage(ImageIO.read(file));
+        setLocationRelativeTo(getOwner());
         setVisible(true);
         return true; // TODO no discard option yet.
     }

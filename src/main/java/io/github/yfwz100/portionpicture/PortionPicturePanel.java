@@ -32,10 +32,10 @@ public class PortionPicturePanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
         if (image != null && portions != null) {
-            int x = 0, y = 0, ymax = 0, gap = 10;
+            int gap = 10, x = gap, y = gap, ymax = 0;
             for (Rectangle2D.Float portion : portions) {
                 if (x + portion.getWidth()> getWidth()) {
-                    y += ymax;
+                    y += ymax + gap;
                     ymax = 0;
                     x = 0;
                 }

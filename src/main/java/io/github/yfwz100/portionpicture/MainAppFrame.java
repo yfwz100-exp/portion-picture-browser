@@ -4,6 +4,7 @@ import sun.applet.Main;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -42,7 +43,7 @@ public class MainAppFrame extends JFrame {
                 JMenu fileMenu = new JMenu("File");
                 menuBar.add(fileMenu);
 
-                JMenuItem openItem = new JMenuItem("Open");
+                JMenuItem openItem = new JMenuItem("Open Pictures");
                 fileMenu.add(openItem);
                 openItem.addActionListener((evt) -> {
                     int ret = fileChooser.showOpenDialog(MainAppFrame.this);
@@ -58,6 +59,37 @@ public class MainAppFrame extends JFrame {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                    }
+                });
+
+                JMenu playMenu = new JMenu("Play");
+                menuBar.add(playMenu);
+                playMenu.add(new AbstractAction("Start auto-play") {
+
+                    private Timer timer = new Timer(1000, (evt) -> {
+                        nextPicture();
+                    });
+                    {
+                        timer.setRepeats(true);
+                    }
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (!timer.isRunning()) {
+                            int interval = Integer.parseInt(JOptionPane.showInputDialog(MainAppFrame.this, "Interval: "));
+                            timer.setDelay(interval);
+                            timer.start();
+                            this.putValue(AbstractAction.NAME, "Stop auto-play");
+                        } else {
+                            timer.stop();
+                            this.putValue(AbstractAction.NAME, "Start auto-play");
+                        }
+                    }
+                });
+                playMenu.add(new AbstractAction("Next") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        nextPicture();
                     }
                 });
 
@@ -81,7 +113,7 @@ public class MainAppFrame extends JFrame {
         }
 
         portionPicturePanel = new PortionPicturePanel();
-        setContentPane(portionPicturePanel);
+        add(portionPicturePanel, BorderLayout.CENTER);
 
         addKeyListener(new KeyAdapter() {
             @Override
